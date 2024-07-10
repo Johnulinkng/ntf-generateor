@@ -3,20 +3,31 @@
 @tailwind utilities;
 
 :root {
-	line-height: 1.5;
-	font-weight: 400;
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	font-family: 'Inter', sans-serif;
-	font-optical-sizing: auto;
-	font-style: normal;
-	font-variation-settings: 'slnt' 0;
+    line-height: 1.5;
+    font-weight: 400;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: 'Inter', sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings: 'slnt' 0;
 }
 
 @layer base {
-	body {
-		@apply bg-zinc-950 text-neutral-200;
-	}
+    body {
+        @apply bg-zinc-950 text-neutral-200;
+        background: linear-gradient(to right, 
+            rgb(2, 20, 20) 0%, 
+            rgba(32, 44, 44, 0.8) 25%, 
+            rgba(20, 20, 10, 0.8) 75%, 
+            rgba(30, 25, 0, 1) 100%
+        );
+        min-height: 100vh;
+    }
+}
+
+#__next {
+    min-height: 100vh;
 }
