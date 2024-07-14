@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ethersproject/bignumber": "^5.7.0",
     "@mui/material": "^5.16.0",
+    "@thirdweb-dev/react": "^4.9.4",
     "@thirdweb-dev/sdk": "^4.0.99",
     "axios": "^1.7.2",
     "formidable": "^3.5.1",

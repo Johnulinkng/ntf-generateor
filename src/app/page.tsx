@@ -9,8 +9,11 @@ import { sepolia, baseSepolia } from "thirdweb/chains";
 import { inAppWallet } from "thirdweb/wallets";
 import { claimTo as claimERC20, balanceOf as balanceOfERC20} from "thirdweb/extensions/erc20";
 import { claimTo as claimERC721, balanceOf as balanceOfERC721 } from "thirdweb/extensions/erc721";
+import { ethers } from 'ethers';
 import { mintNFT } from "@/utils/mintNFT";
 import { AIGenerate } from "./component/AIGenerate";
+
+
 
 export default function Home() {
   const account = useActiveAccount();
@@ -21,6 +24,38 @@ export default function Home() {
   const [generatedImages, setGeneratedImages] = useState<string[]>([]); 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showInfo, setShowInfo] = useState(false);
+  const [userNFTs, setUserNFTs] = useState<string[]>([]);//
+
+  const handleBuyNFT = async () => {
+    if (!selectedImage || !account) return;
+
+    setIsMinting(true);
+    try {
+      const response = await fetch('/api/buyNFT', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          imageUrl: selectedImage,
+          walletAddress: account.address
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(`NFT purchased successfully! Transaction hash: ${result.transactionHash}`);
+        // 更新用户的NFT列表
+        setUserNFTs(prevNFTs => [...prevNFTs, selectedImage]);
+      } else {
+        alert('Failed to purchase NFT: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error purchasing NFT:', error);
+      alert('An error occurred while purchasing the NFT');
+    } finally {
+      setIsMinting(false);
+    }
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -48,7 +83,7 @@ export default function Home() {
         body: JSON.stringify({ prompt, init_image: uploadedImage })
       });
       
-      const data = await response.json();
+      const data = await response.json(); 
       
       if (!response.ok) {
         throw new Error(data.error || 'Generation failed');
@@ -189,14 +224,23 @@ export default function Home() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <h2 className="text-2xl font-bold mb-4">Claim Tokens</h2>
-                <ClaimButtons walletAddress={account?.address || ""} />
+                <h2 className="text-2xl font-bold mb-4">USDC Balance</h2>
+                <USDCBalance walletAddress={account?.address || ""} />
               </div>
               <div>
                 <h2 className="text-2xl font-bold mb-4">Wallet Balances</h2>
-                <WalletBalances walletAddress={account?.address || ""} />
+                <UserNFTs nfts={userNFTs} />
               </div>
             </div>
+            {selectedImage && (
+          <button
+            onClick={handleBuyNFT}
+            disabled={isMinting}
+            className="mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50 w-full"
+          >
+            {isMinting ? 'Purchasing...' : 'Purchase NFT with USDC'}
+          </button>
+        )}
           </div>
         </div>
       </div>
@@ -233,6 +277,40 @@ export default function Home() {
     </main>
   );
 }
+
+const USDCBalance: React.FC<WalletAddressProps> = ({ walletAddress }) => {
+  const usdcContract = getContract({
+    client: client,
+    chain: sepolia,
+    address: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238" // 替换为实际的USDC合约地址
+  });
+
+  const { data: usdcBalance } = useReadContract(
+    balanceOfERC20,
+    {
+      contract: usdcContract,
+      address: walletAddress || ""
+    }
+  );
+
+  const formattedBalance = usdcBalance ? ethers.utils.formatUnits(usdcBalance.toString(), 6) : "0";
+
+  return (
+    <div>
+      <p>USDC Balance: {formattedBalance} USDC</p>
+    </div>
+  );
+};
+
+const UserNFTs: React.FC<{ nfts: string[] }> = ({ nfts }) => {
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {nfts.map((nft, index) => (
+        <img key={index} src={nft} alt={`NFT ${index + 1}`} className="w-full h-auto object-cover rounded" />
+      ))}
+    </div>
+  );
+};
 
 function Header() {
   return (
@@ -324,7 +402,7 @@ const WalletBalances: React.FC<WalletAddressProps> = ({ walletAddress }) => {
       address: walletAddress || ""
     }
   );
-
+    
   return (
     <div>
       <p>Wallet Balances</p>
