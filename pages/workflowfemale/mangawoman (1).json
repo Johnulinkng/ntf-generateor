@@ -1,0 +1,437 @@
+{
+  "1": {
+    "inputs": {
+      "image": "unnamed.jpg",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "2": {
+    "inputs": {
+      "weight": 1.8,
+      "ipadapter": [
+        "6",
+        1
+      ],
+      "image": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "IPAdapterEncoder",
+    "_meta": {
+      "title": "IPAdapter Encoder"
+    }
+  },
+  "5": {
+    "inputs": {
+      "ckpt_name": "GhostMix_V2.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "6": {
+    "inputs": {
+      "preset": "PLUS FACE (portraits)",
+      "model": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "IPAdapterUnifiedLoader",
+    "_meta": {
+      "title": "IPAdapter Unified Loader"
+    }
+  },
+  "7": {
+    "inputs": {
+      "weight": 0.8,
+      "weight_type": "strong style transfer",
+      "start_at": 0.02,
+      "end_at": 0.8,
+      "embeds_scaling": "K+V w/ C penalty",
+      "model": [
+        "41",
+        0
+      ],
+      "ipadapter": [
+        "6",
+        1
+      ],
+      "pos_embed": [
+        "2",
+        0
+      ],
+      "neg_embed": [
+        "2",
+        1
+      ]
+    },
+    "class_type": "IPAdapterEmbeds",
+    "_meta": {
+      "title": "IPAdapter Embeds"
+    }
+  },
+  "10": {
+    "inputs": {
+      "text": "(worst quality, low quality:2), (monochrome), zombie,overexposure, watermark,text,bad anatomy,bad hand,extra hands,extra fingers,too many fingers,fused fingers,bad arm,distorted arm,extra arms,fused arms,extra legs,missing leg,disembodied leg,extra nipples, detached arm, liquid hand,inverted hand,disembodied limb, loli, oversized head,extra body,extra navel,easynegative,sketch, duplicate, ugly, huge eyes, text, logo, worst face, (bad and mutated hands:1.3), (blurry:2.0), horror, geometry, bad_prompt, (bad hands), (missing fingers), multiple limbs, bad anatomy, (interlocked fingers:1.2), , bad-hands-5 ",
+      "clip": [
+        "5",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Negetive Prompt)"
+    }
+  },
+  "11": {
+    "inputs": {
+      "seed": 329295106426079,
+      "steps": 30,
+      "cfg": 3.0300000000000002,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 0.7000000000000001,
+      "model": [
+        "7",
+        0
+      ],
+      "positive": [
+        "53",
+        0
+      ],
+      "negative": [
+        "10",
+        0
+      ],
+      "latent_image": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "12": {
+    "inputs": {
+      "samples": [
+        "11",
+        0
+      ],
+      "vae": [
+        "5",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "16": {
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
+    }
+  },
+  "41": {
+    "inputs": {
+      "lora_name": "Fractal Art_v1.0.safetensors",
+      "strength_model": 1,
+      "model": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoraLoaderModelOnly"
+    }
+  },
+  "42": {
+    "inputs": {
+      "model_name": "bbox/face_yolov8m.pt"
+    },
+    "class_type": "UltralyticsDetectorProvider",
+    "_meta": {
+      "title": "UltralyticsDetectorProvider"
+    }
+  },
+  "43": {
+    "inputs": {
+      "model_name": "sam_vit_b_01ec64.pth",
+      "device_mode": "AUTO"
+    },
+    "class_type": "SAMLoader",
+    "_meta": {
+      "title": "SAMLoader (Impact)"
+    }
+  },
+  "44": {
+    "inputs": {
+      "upscale_by": 2.3000000000000003,
+      "seed": 10647187512647,
+      "steps": 20,
+      "cfg": 7,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 0.5,
+      "mode_type": "Linear",
+      "tile_width": 1024,
+      "tile_height": 1024,
+      "mask_blur": 8,
+      "tile_padding": 32,
+      "seam_fix_mode": "None",
+      "seam_fix_denoise": 1,
+      "seam_fix_width": 64,
+      "seam_fix_mask_blur": 8,
+      "seam_fix_padding": 16,
+      "force_uniform_tiles": true,
+      "tiled_decode": false,
+      "image": [
+        "12",
+        0
+      ],
+      "model": [
+        "7",
+        0
+      ],
+      "positive": [
+        "53",
+        0
+      ],
+      "negative": [
+        "10",
+        0
+      ],
+      "vae": [
+        "5",
+        2
+      ],
+      "upscale_model": [
+        "45",
+        0
+      ]
+    },
+    "class_type": "UltimateSDUpscale",
+    "_meta": {
+      "title": "Ultimate SD Upscale"
+    }
+  },
+  "45": {
+    "inputs": {
+      "model_name": "1x-ITF-SkinDiffDetail-Lite-v1.pth"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "Load Upscale Model"
+    }
+  },
+  "46": {
+    "inputs": {
+      "guide_size": 512,
+      "guide_size_for": true,
+      "max_size": 1024,
+      "seed": 191950059241620,
+      "steps": 25,
+      "cfg": 5.1000000000000005,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 0.5,
+      "feather": 35,
+      "noise_mask": true,
+      "force_inpaint": true,
+      "bbox_threshold": 0.5,
+      "bbox_dilation": 10,
+      "bbox_crop_factor": 3,
+      "sam_detection_hint": "center-1",
+      "sam_dilation": 0,
+      "sam_threshold": 0.93,
+      "sam_bbox_expansion": 0,
+      "sam_mask_hint_threshold": 0.7000000000000001,
+      "sam_mask_hint_use_negative": "False",
+      "drop_size": 10,
+      "wildcard": "",
+      "cycle": 1,
+      "inpaint_model": false,
+      "noise_mask_feather": 20,
+      "image": [
+        "44",
+        0
+      ],
+      "model": [
+        "7",
+        0
+      ],
+      "clip": [
+        "5",
+        1
+      ],
+      "vae": [
+        "5",
+        2
+      ],
+      "positive": [
+        "53",
+        0
+      ],
+      "negative": [
+        "10",
+        0
+      ],
+      "bbox_detector": [
+        "42",
+        0
+      ],
+      "sam_model_opt": [
+        "43",
+        0
+      ],
+      "segm_detector_opt": [
+        "42",
+        1
+      ]
+    },
+    "class_type": "FaceDetailer",
+    "_meta": {
+      "title": "FaceDetailer"
+    }
+  },
+  "53": {
+    "inputs": {
+      "text": " (masterpiece, best quality:1.3),extremely high detailed, intricate, 8k, HDR, wallpaper, cinematic lighting, <lora:Mecha:1> ,(universe),(holding sword:1.3), glowing, armor, glowing eyes, mecha, large wings, <lora:Futuristicbot4:0.6>.",
+      "clip": [
+        "5",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "75": {
+    "inputs": {
+      "guide_size": 512,
+      "guide_size_for": true,
+      "max_size": 1024,
+      "seed": 124810569809305,
+      "steps": 31,
+      "cfg": 4,
+      "sampler_name": "clyb_4m_sde_momentumized",
+      "scheduler": "karras",
+      "denoise": 0.5,
+      "feather": 35,
+      "noise_mask": true,
+      "force_inpaint": true,
+      "bbox_threshold": 0.5,
+      "bbox_dilation": 10,
+      "bbox_crop_factor": 3,
+      "sam_detection_hint": "center-1",
+      "sam_dilation": 0,
+      "sam_threshold": 0.92,
+      "sam_bbox_expansion": 0,
+      "sam_mask_hint_threshold": 0.7000000000000001,
+      "sam_mask_hint_use_negative": "False",
+      "drop_size": 10,
+      "wildcard": "refine fingers， only 2 hands totally",
+      "cycle": 1,
+      "inpaint_model": false,
+      "noise_mask_feather": 20,
+      "image": [
+        "46",
+        0
+      ],
+      "model": [
+        "7",
+        0
+      ],
+      "clip": [
+        "5",
+        1
+      ],
+      "vae": [
+        "5",
+        2
+      ],
+      "positive": [
+        "53",
+        0
+      ],
+      "negative": [
+        "10",
+        0
+      ],
+      "bbox_detector": [
+        "76",
+        0
+      ],
+      "sam_model_opt": [
+        "77",
+        0
+      ],
+      "detailer_hook": [
+        "79",
+        0
+      ]
+    },
+    "class_type": "FaceDetailer",
+    "_meta": {
+      "title": "FaceDetailer"
+    }
+  },
+  "76": {
+    "inputs": {
+      "model_name": "bbox/hand_yolov8s.pt"
+    },
+    "class_type": "UltralyticsDetectorProvider",
+    "_meta": {
+      "title": "UltralyticsDetectorProvider"
+    }
+  },
+  "77": {
+    "inputs": {
+      "model_name": "sam_vit_b_01ec64.pth",
+      "device_mode": "AUTO"
+    },
+    "class_type": "SAMLoader",
+    "_meta": {
+      "title": "SAMLoader (Impact)"
+    }
+  },
+  "79": {
+    "inputs": {
+      "mode": "512x512"
+    },
+    "class_type": "CoreMLDetailerHookProvider",
+    "_meta": {
+      "title": "CoreMLDetailerHookProvider"
+    }
+  },
+  "81": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "75",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  }
+}

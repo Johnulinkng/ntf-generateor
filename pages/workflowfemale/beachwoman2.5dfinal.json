@@ -1,0 +1,351 @@
+{
+  "1": {
+    "inputs": {
+      "image": "unnamed.jpg",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "2": {
+    "inputs": {
+      "weight": 2.5100000000000002,
+      "ipadapter": [
+        "6",
+        1
+      ],
+      "image": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "IPAdapterEncoder",
+    "_meta": {
+      "title": "IPAdapter Encoder"
+    }
+  },
+  "5": {
+    "inputs": {
+      "ckpt_name": "realisticVisionV60B1_v51HyperVAE.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "6": {
+    "inputs": {
+      "preset": "PLUS FACE (portraits)",
+      "model": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "IPAdapterUnifiedLoader",
+    "_meta": {
+      "title": "IPAdapter Unified Loader"
+    }
+  },
+  "7": {
+    "inputs": {
+      "weight": 1.3,
+      "weight_type": "strong style transfer",
+      "start_at": 0.015,
+      "end_at": 0.851,
+      "embeds_scaling": "K+V w/ C penalty",
+      "model": [
+        "101",
+        0
+      ],
+      "ipadapter": [
+        "6",
+        1
+      ],
+      "pos_embed": [
+        "2",
+        0
+      ],
+      "neg_embed": [
+        "2",
+        1
+      ]
+    },
+    "class_type": "IPAdapterEmbeds",
+    "_meta": {
+      "title": "IPAdapter Embeds"
+    }
+  },
+  "10": {
+    "inputs": {
+      "text": "(worst quality, low quality:1.4), (depth of field, blurry:1.2), (greyscale, monochrome:1.1), 3D face, cropped, lowres, text, jpeg artifacts, signature, watermark, username, blurry, artist name, trademark, watermark, title, multiple view, Reference sheet, curvy, plump, fat, muscular female, strabismus, nsfw, nipple, navel, bare thighs, midriff, bare legs, hat,animal ears,Blurred characters, blurred eyes，blurred Nose, bad hand,  skin spots, extra limbs, bad hands, jpeg artifact,skin folds",
+      "clip": [
+        "5",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Negetive Prompt)"
+    }
+  },
+  "11": {
+    "inputs": {
+      "seed": 1099191698048085,
+      "steps": 30,
+      "cfg": 4.15,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 0.7000000000000001,
+      "model": [
+        "7",
+        0
+      ],
+      "positive": [
+        "53",
+        0
+      ],
+      "negative": [
+        "10",
+        0
+      ],
+      "latent_image": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "16": {
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
+    }
+  },
+  "42": {
+    "inputs": {
+      "model_name": "bbox/face_yolov8m.pt"
+    },
+    "class_type": "UltralyticsDetectorProvider",
+    "_meta": {
+      "title": "UltralyticsDetectorProvider"
+    }
+  },
+  "43": {
+    "inputs": {
+      "model_name": "sam_vit_b_01ec64.pth",
+      "device_mode": "AUTO"
+    },
+    "class_type": "SAMLoader",
+    "_meta": {
+      "title": "SAMLoader (Impact)"
+    }
+  },
+  "53": {
+    "inputs": {
+      "text": "model, fit face, <lora:russianDollLikeness_v3:0.3>, (best quality, ultra high res, raw photo, masterpiece, extremely detailed photograph), (anime, photorealistic:1.4), 1girl  solo focus, looking at viewer, pov, closeup,  (sharp chin:1.5), <lora:eyeLora_eyesV10:0.4>, (ponytail), colorful eyes, from below, young woman, (bikini:1.5), large breasts，Sexy poses，Smooth skin, nature and scenery, colorful hair, smile",
+      "clip": [
+        "5",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "101": {
+    "inputs": {
+      "lora_name": "RussianDollV3.safetensors",
+      "strength_model": 0.3,
+      "strength_clip": 1,
+      "model": [
+        "6",
+        0
+      ],
+      "clip": [
+        "5",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "Load LoRA"
+    }
+  },
+  "106": {
+    "inputs": {
+      "upscale_method": "nearest-exact",
+      "width": 1024,
+      "height": 1024,
+      "crop": "disabled",
+      "samples": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "LatentUpscale",
+    "_meta": {
+      "title": "Upscale Latent"
+    }
+  },
+  "107": {
+    "inputs": {
+      "samples": [
+        "108",
+        0
+      ],
+      "vae": [
+        "5",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "108": {
+    "inputs": {
+      "seed": 895581194732272,
+      "steps": 30,
+      "cfg": 4.54,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 0.5,
+      "model": [
+        "7",
+        0
+      ],
+      "positive": [
+        "53",
+        0
+      ],
+      "negative": [
+        "10",
+        0
+      ],
+      "latent_image": [
+        "106",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "110": {
+    "inputs": {
+      "guide_size": 512,
+      "guide_size_for": true,
+      "max_size": 1024,
+      "seed": 149485004885969,
+      "steps": 22,
+      "cfg": 3.9000000000000004,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 0.5,
+      "feather": 20,
+      "noise_mask": true,
+      "force_inpaint": true,
+      "bbox_threshold": 0.6,
+      "bbox_dilation": 10,
+      "bbox_crop_factor": 3,
+      "sam_detection_hint": "center-1",
+      "sam_dilation": 0,
+      "sam_threshold": 0.93,
+      "sam_bbox_expansion": 0,
+      "sam_mask_hint_threshold": 0.7000000000000001,
+      "sam_mask_hint_use_negative": "False",
+      "drop_size": 3,
+      "wildcard": "prefectly face, clear face, beautiful eye ",
+      "cycle": 1,
+      "inpaint_model": true,
+      "noise_mask_feather": 10,
+      "image": [
+        "107",
+        0
+      ],
+      "model": [
+        "7",
+        0
+      ],
+      "clip": [
+        "101",
+        1
+      ],
+      "vae": [
+        "5",
+        2
+      ],
+      "positive": [
+        "53",
+        0
+      ],
+      "negative": [
+        "10",
+        0
+      ],
+      "bbox_detector": [
+        "42",
+        0
+      ],
+      "sam_model_opt": [
+        "43",
+        0
+      ]
+    },
+    "class_type": "FaceDetailer",
+    "_meta": {
+      "title": "FaceDetailer"
+    }
+  },
+  "114": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "110",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "115": {
+    "inputs": {
+      "images": [
+        "107",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "116": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "110",
+        1
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  }
+}

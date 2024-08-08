@@ -16,7 +16,7 @@ export async function mintNFT(imageUrl: string): Promise<{ rpcUrl: string; token
   const sdk = ThirdwebSDK.fromPrivateKey(PRIVATE_KEY, "sepolia", {
     secretKey: SECRET_KEY,
   });
-
+//hans cool
   try {
     const nftCollection = await sdk.getContract(NFT_CONTRACT_ADDRESS, "nft-collection");
 

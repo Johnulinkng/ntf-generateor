@@ -1,62 +1,68 @@
-// pages/api/buyNFT.ts
-
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
-import { ethers } from "ethers";
+import { ethers } from 'ethers';
+import { NFT_PURCHASE_CONTRACT_ABI } from './contract';
 
-const THIRDWEB_SECRET_KEY = process.env.SECRET_KEY;
-const USDC_CONTRACT_ADDRESS = process.env.USDC_CONTRACT_ADDRESS;
-const NFT_CONTRACT_ADDRESS1 = process.env.NFT_CONTRACT_ADDRESS1;
-const NFT_PRICE_IN_USDC = ethers.utils.parseUnits("0.01", 6); // 1 USDC (6 decimal places)
+const NFT_PURCHASE_CONTRACT_ADDRESS = "0xbE1DcDEE18CB2A818Bc75A2c56018A82D5bBd5BC";
+const NFT_CONTRACT_ADDRESS = "0x505905eca8d3Bdd97428Fe9b925507fe81c7d1e2";
+const ERC20_TOKEN_ADDRESS = "0x1B998F4b9BFEE8Ee857785Ef7F4838Db1Ec33521";
+const PRIVATE_KEY = "7e7d367f83083f586e9f7a6cd610b7eda75b4cb933521eaf684340406f43d14a";
+const SECRET_KEY = "0c4AeVT3_JZIkuj_7WmMsRVDB0N0ID0Q7ZOQh53iYFqH8dyyWLW9sLMc21akLa62VkYCidUazjHNbEg6ngVBBQ";
+const Owner = "0xA9D5245AB88234C57DF9D0FB8e6CdE17e3d7291F";
+//有可能会有问题
+const FIXED_PRICE = ethers.utils.parseUnits("1", 18);
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ success: false, message: 'Method Not Allowed' });
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { imageUrl, walletAddress } = req.body;
+  const { action, tokenId, userAddress } = req.body;
 
-  if (!imageUrl || !walletAddress) {
-    return res.status(400).json({ success: false, message: 'Missing required parameters' });
+  if (!action || !tokenId || !userAddress) {
+    return res.status(400).json({ message: 'Missing required parameters' });
   }
 
   try {
-    // 初始化 ThirdwebSDK
-    const sdk = ThirdwebSDK.fromPrivateKey(THIRDWEB_SECRET_KEY!, "sepolia");
-
-    // 获取 USDC 合约
-    const usdcContract = await sdk.getContract(USDC_CONTRACT_ADDRESS!);
-
-    // 获取 NFT 合约
-    const nftContract = await sdk.getContract(NFT_CONTRACT_ADDRESS1!);
-
-    // 检查用户的 USDC 余额
-    const balance = await usdcContract.erc20.balanceOf(walletAddress);
-    if (ethers.BigNumber.from(balance.value).lt(NFT_PRICE_IN_USDC)) {
-      return res.status(400).json({ success: false, message: 'Insufficient USDC balance' });
-    }
-
-    // 转移 USDC
-    const transferResult = await usdcContract.erc20.transfer(NFT_CONTRACT_ADDRESS1!, NFT_PRICE_IN_USDC.toString());
-    if (!transferResult) {
-      throw new Error('USDC transfer failed');
-    }
-
-    // 铸造 NFT
-    const mintResult = await nftContract.erc721.mintTo(walletAddress, {
-      name: "AI Generated NFT",
-      description: "An NFT generated using AI",
-      image: imageUrl,
+    const sdk = ThirdwebSDK.fromPrivateKey(PRIVATE_KEY, "sepolia", {
+      secretKey: SECRET_KEY,
     });
+    const nftPurchaseContract = await sdk.getContract(NFT_PURCHASE_CONTRACT_ADDRESS, NFT_PURCHASE_CONTRACT_ABI);
+    const nftContract = await sdk.getContract(NFT_CONTRACT_ADDRESS);
+    const usdcContract = await sdk.getContract(ERC20_TOKEN_ADDRESS);
 
-    return res.status(200).json({
-      success: true,
-      message: 'NFT purchased successfully',
-      transactionHash: mintResult.receipt.transactionHash,
-    });
+    switch (action) {
+      case 'approveNFT':
+        // NFT approve for single tokenId
+        const result = await nftContract.call("approve", [NFT_PURCHASE_CONTRACT_ADDRESS, tokenId]);
+        console.log("NFT approved:", result.receipt.transactionHash);
+        res.status(200).json({
+          success: true,
+          message: 'NFT approved successfully',
+          transactionHash: result.receipt.transactionHash
+        });
+        break;
 
-  } catch (error) {
-    console.error('Error purchasing NFT:', error);
-    return res.status(500).json({ success: false, message: 'Failed to purchase NFT', error: (error as Error).message });
+      case 'listNFT':
+        // List NFT
+        const listNFT = await nftPurchaseContract.call("listNFT", [tokenId, FIXED_PRICE]);
+        console.log("NFT listed:", listNFT.receipt.transactionHash);
+        res.status(200).json({
+          success: true,
+          message: 'NFT listed successfully',
+          transactionHash: listNFT.receipt.transactionHash
+        });
+        break;
+
+        default:
+          res.status(400).json({ message: 'Invalid action' });
+      }
+    } catch (error) {
+      console.error('Error in NFT process:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: error instanceof Error ? error.message : 'An unexpected error occurred' 
+      });
+    }
   }
-}
