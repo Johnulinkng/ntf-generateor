@@ -1,4 +1,4 @@
-## This is a program developed using thirdweb sdk to connect to local comfyui to automatically generate nft It contains a beautiful nft interface, using erc20 to buy ai to generate nft process, and call the self-developed a full-featured smart contract including list nft and unlist
+## This is a program developed using thirdweb sdk to connect to local comfyui to automatically generate nft It contains a beautiful nft interface, using ERC20 & ERC 721to buy ai to generate nft process, and call the self-developed a full-featured smart contract including list nft and unlist
 
 
 
